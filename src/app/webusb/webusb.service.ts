@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import * as encoding from 'text-encoding';
 
-var device;
-
 @Injectable()
 export class WebusbSerivce {
-    
-    connect = async function (callback) {
+
+    private device;
+
+    connect = async function(callback){
         this.getPairedDevice()
         .then(() => {
-            if(!device) {
+            if(!this.device) {
+                // this.getDeviceSelector();
                 // this.getDeviceSelector().then(
                 //     (device) => {this.device = device}
                 // );
@@ -17,24 +18,32 @@ export class WebusbSerivce {
                 // this.device = device;
             }
         })
-        .then(() => device.selectConfiguration(1)) // Select configuration #1 for the device.
-        .then(() => device.claimInterface(2)) // Request exclusive control over interface #2.
-        .then(() => device.controlTransferOut({
+        .then(() => this.device.selectConfiguration(1)) // Select configuration #1 for the device.
+        .then(() => this.device.claimInterface(2)) // Request exclusive control over interface #2.
+        .then(() => this.device.controlTransferOut({
             requestType: 'class',
             recipient: 'interface',
             request: 0x22,
             value: 0x01,
-            index: 0x02})) // Ready to receive data
+            index: 0x02})) // Ready to receive data 
+        .then(() => this.device.transferOut(4, new encoding.TextEncoder().encode('Hey')))
         .then(() => {
-            this.readLoop(callback)
+            this.readLoop(callback);
         })
         .catch(error => { 
             console.error(error); 
         });
     }
 
-    readLoop = async function(callback){
-        device.transferIn(5, 64)
+    sendData = async (data: string) => {
+        this.device.transferOut(
+            4,
+            new encoding.TextEncoder().encode(data)
+        );
+    }
+
+    readLoop = async function(callback) {
+        this.device.transferIn(5, 64)
             .then(async (result) => {
                 var decoder = new encoding.TextDecoder();
                 callback(decoder.decode(result.data));
@@ -48,19 +57,19 @@ export class WebusbSerivce {
         return navigator.usb.getDevices()
         .then(devices => {
             if (devices.length) {
-                device = devices[0];
-                return device.open(); // Begin a session.
+                this.device = devices[0];
+                return this.device.open(); // Begin a session.
             } else {
                 return false;
             }
         });
     }
 
-    getDeviceSelector = function() {
+    getDeviceSelector = () => {
         return navigator.usb.requestDevice({ filters: [{ vendorId: 0x2341 }] })
         .then(selectedDevice => {
-            device = selectedDevice;
-            return device.open(); // Begin a session.
+            this.device = selectedDevice;
+            return this.device.open(); // Begin a session.
         })
     }
 }

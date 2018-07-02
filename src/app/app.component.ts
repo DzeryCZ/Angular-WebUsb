@@ -8,32 +8,19 @@ import { WebusbSerivce } from './webusb/webusb.service';
 })
 export class AppComponent {
 
-  public temperature: string = '';
-  public humidity: string = '';
-  public title = 'app';
+  public text: string = 'My Text';
 
   constructor(private webusbSerivce: WebusbSerivce) {}
 
-  public connect() {
+  public async connect() {
     this.webusbSerivce.connect(this.showResult);
   }
 
+  public send() {
+    this.webusbSerivce.sendData(this.text);
+  }
+
   public showResult = (data) => {
-      let lines = data.split(/\r?\n/);
-      var dataObj = {
-        t: Number,
-        h: Number
-      };
-      lines.forEach(line => {
-          try{
-              dataObj = JSON.parse(line);
-          } catch($e) {}
-          return dataObj;
-      });
-      
-      if (typeof dataObj.t === 'number' && typeof dataObj.h === 'number') {
-        this.temperature = dataObj.t;
-        this.humidity = dataObj.h; 
-      }
+    console.log(data);
   }
 }
