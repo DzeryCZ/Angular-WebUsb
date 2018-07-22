@@ -4,23 +4,19 @@ import { WebusbSerivce } from './webusb/webusb.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  // styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
 
-  public text: string = 'My Text';
-
-  constructor(private webusbSerivce: WebusbSerivce) {}
-
-  public async connect() {
-    this.webusbSerivce.connect(this.showResult);
+  constructor(private webusbSerivce: WebusbSerivce) {
+    this.webusbSerivce.connectToPairedDevice();
   }
 
-  public send() {
-    this.webusbSerivce.sendData(this.text);
+  public connect() {
+    this.webusbSerivce.connectToNewDevice();
   }
 
-  public showResult = (data) => {
-    console.log(data);
+  public disconnect() {
+    this.webusbSerivce.disconnect();
   }
 }

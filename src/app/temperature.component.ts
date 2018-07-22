@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { WebusbSerivce } from './webusb/webusb.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './temperature.component.html',
-  styleUrls: ['./temperature.component.css']
+  selector: 'webusb-content',
+  templateUrl: './temperature.component.html'
 })
 export class TemperatureComponent {
 
@@ -12,10 +11,12 @@ export class TemperatureComponent {
   public humidity: string = '';
   public title = 'app';
 
-  constructor(private webusbSerivce: WebusbSerivce) {}
+  constructor(private webusbSerivce: WebusbSerivce) {
+    this.webusbSerivce.registerReadCallback(this.showResult);
+  }
 
-  public async connect() {
-    this.webusbSerivce.connect(this.showResult);
+  public measure = function() {
+    this.webusbSerivce.sendSymbol(128); // get temperature and Humidity
   }
 
   public showResult = (data) => {

@@ -1,0 +1,106 @@
+$white: #fff;
+$dark: #333;
+$dark-hover: #555;
+$border: #dadada;
+$green: #89C053;
+$green-hover: #9ED26A;
+$red: #E8553E;
+$red-hover: #FA6C51;
+
+.jz-body {
+    font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+.jz-menu {
+    width: 100%;
+    background: $dark;
+    display: flex;
+}
+.jz-menu-item,
+.jz-menu-item-right {
+    display: inline-flex;
+    cursor: pointer;
+    color: $white;
+
+    .jz-item-link {
+        padding: 10px 15px;
+    }
+
+    .jz-item-link:hover {
+        background: $dark-hover;
+    }
+
+    .jz-item-link,
+    .jz-item-link:hover {
+        color: $white;
+        text-decoration: none;
+    }
+}
+
+.jz-menu-item-right {
+    justify-content: flex-end;
+    flex: 1;
+
+    &.connected{
+        .jz-item-disconnect { display: inline; }
+        .jz-item-connect { display: none; }
+    }
+
+    .jz-item-connect{
+        background: $green;
+        
+        &:hover {
+            background: $green-hover;
+        }
+    }
+
+    .jz-item-disconnect {
+        display: none;
+        background: $red;
+    
+        &:hover {
+            background: $red-hover;
+        }
+    }
+}
+
+.jz-input {
+    padding: 4px 7px;
+    float: left;
+    margin-right: 2px;
+    border: 1px solid $border;
+}
+
+.jz-button {
+    background: $green;
+    color: $white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+
+    &:hover{
+        background: $green-hover;
+    }
+}
+
+.jz-content{
+    position: relative;
+
+    .jz-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.9);
+        color: $dark;
+        text-align: center;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    &.connected {
+        .jz-overlay {
+            display: none;
+        }
+    }
+}

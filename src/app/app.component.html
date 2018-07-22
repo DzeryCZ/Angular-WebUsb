@@ -1,9 +1,19 @@
-<h1>WebUSB</h1>
-<h2>Show Text</h2>
+<h1>WebUSB demo</h1>
 
-<button (click)="connect()">Connect</button>
-<div>
-    <input type="text" [(ngModel)]="text"/>
-    <p>{{text}}</p>
+<div class="jz-menu">
+	<div class="jz-menu-item">
+			<a class="jz-item-link" href="/#/temperature-humidity">Temperature + Humidity</a>
+	</div>
+	<div class="jz-menu-item">
+		<a class="jz-item-link" href="/#/show-text">Show text on LCD</a>
+	</div>
+	<div class="jz-menu-item-right" [class.connected]="webusbSerivce.isConnected">
+		<span class="jz-item-link jz-item-connect" (click)="connect()">Connect</span>
+		<span class="jz-item-link jz-item-disconnect" (click)="disconnect()">Disconnect</span>
+	</div>
 </div>
-<button (click)="send()">Send</button>
+
+<div class="jz-content" [class.connected]="webusbSerivce.isConnected">
+	<div class="jz-overlay">Please connect your device</div>
+	<router-outlet></router-outlet>
+</div>
