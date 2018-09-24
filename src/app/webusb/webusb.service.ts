@@ -39,10 +39,11 @@ export class WebusbSerivce {
             value: 0x01,
             index: 0x02})) // Ready to receive data 
         .then(() => {
-            this.readLoop();
+            this.readLoop(64);
         })
         .then(() => {
             this.isConnected = true;
+            console.log(this.device.configuration.interfaces[2].alternate.endpoints[1].packetSize);
         })
         .catch(error => { 
             console.error(error); 
@@ -72,17 +73,32 @@ export class WebusbSerivce {
         );
     }
 
-    readLoop = async function() {
-        this.device.transferIn(5, 64)
+    readLoop = async function(length: number) {
+        var data = '';
+        while (this.isConnected) { // @todo - disconnection crashes the app
+            var result = await this.readOneLine(length);
+            data += result;
+            if (result === '') {
+                console.log(data);
+                this.readCallbacks.forEach(callback => {
+                    callback(data);
+                });
+                break;
+            } 
+        }
+        this.readLoop(length);
+    }
+
+    readOneLine = async function(length: number) {
+        var data = '';
+        await this.device.transferIn(5, length)
             .then(async (result) => {
                 var decoder = new encoding.TextDecoder();
-                this.readCallbacks.forEach(callback => {
-                    callback(decoder.decode(result.data));
-                });
-                await this.readLoop();
+                data = decoder.decode(result.data);
             }, error => {
                 console.error(error);
             });
+        return data;
     }
 
     getPairedDevice = function() {
@@ -98,11 +114,17 @@ export class WebusbSerivce {
     }
 
     getDeviceSelector = function() {
-        return navigator.usb.requestDevice({ filters: [{ vendorId: 0x2341 }] })
+        return navigator.usb.requestDevice({ filters: [] }) // filters: [{ vendorId: 0x2341 }]
         .then(selectedDevice => {
             this.device = selectedDevice;
             return this.device.open(); // Begin a session.
         })
+    }
+
+    getDeviceName = function() {
+        if (this.device) {
+            return this.device.productName;
+        }
     }
 
     disconnect = function() {

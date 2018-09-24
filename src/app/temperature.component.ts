@@ -31,8 +31,6 @@ export class TemperatureComponent {
           } catch($e) {}
           return dataObj;
       });
-      
-      console.log(dataObj);
 
       if (typeof dataObj.t === 'number' && typeof dataObj.h === 'number') {
         this.temperature = dataObj.t;
